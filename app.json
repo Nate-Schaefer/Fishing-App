@@ -22,6 +22,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8360d115-1626-4dd0-bff3-6be9a1a6fcce"
+      }
+    },
+    "owner": "nateschaefer"
   }
 }
