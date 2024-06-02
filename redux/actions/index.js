@@ -1,6 +1,6 @@
 import { getFirestore, doc, getDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { USER_STATE_CHANGE, USER_POSTS_STATE_CHANGE } from '../constants/index'; // Ensure this path is correct
+import { USER_STATE_CHANGE, USER_POSTS_STATE_CHANGE, USER_FOLLOWING_STATE_CHANGE } from '../constants/index'; // Ensure this path is correct
 
 export function fetchUser() {
     return async (dispatch) => {
@@ -45,6 +45,29 @@ export function fetchUserPosts() {
                 } else {
                     console.log('User does not exist');
                 }
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            console.log('No user logged in');
+        }
+    };
+}
+
+export function fetchUserFollowing() {
+    return async (dispatch) => {
+        const db = getFirestore(); // Initialize Firestore
+        const auth = getAuth(); // Initialize Firebase Auth
+        const user = auth.currentUser;
+        if (user) {
+            const userPostsRef = collection(db, "following", user.uid, "userFollowing");
+            try {
+                const snapshot = await getDocs(userPostsRef);
+                let following = snapshot.docs.map(doc => {
+                    const id = doc.id;
+                    return id;
+                })
+                dispatch({ type: USER_FOLLOWING_STATE_CHANGE, following });
             } catch (error) {
                 console.log(error);
             }

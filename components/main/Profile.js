@@ -1,13 +1,14 @@
 import React, {useState, useEffect} from 'react'
-import { StyleSheet, Text, View, Image, FlatList } from 'react-native'
+import { StyleSheet, Text, View, Image, FlatList, Button } from 'react-native'
 import { connect } from 'react-redux'
 import { getAuth } from 'firebase/auth'
-import { getFirestore, doc, getDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, query, orderBy, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
 
 
 function Profile(props) {
   const [userPosts, setUserPosts] = useState([])
   const [user, setUser] = useState(null)
+  const [following, setFollowing] = useState(false)
 
   useEffect(() => {
     const { currentUser, posts } = props;
@@ -18,9 +19,15 @@ function Profile(props) {
       setUserPosts(posts)
     } 
     else {
+      if(props.following.indexOf(props.route.params.uid) > -1) {
+        setFollowing(true);
+      }
+      else {
+        setFollowing(false);
+      }
       grabUser();
     }
-  }, [props.route.params.uid])
+  }, [props.route.params.uid, props.following])
 
   const grabUser = async () => {
     const db = getFirestore(); // Initialize Firestore
@@ -52,6 +59,20 @@ function Profile(props) {
       }
   }
 
+  const onFollow = async () => {
+    const db = getFirestore();
+    const auth = getAuth();
+    await setDoc(doc(db, "following", auth.currentUser.uid, "userFollowing", props.route.params.uid), {});
+    setFollowing(true);
+  }
+
+  const onUnfollow = async () => {
+    const db = getFirestore();
+    const auth = getAuth();
+    await deleteDoc(doc(db, "following", auth.currentUser.uid, "userFollowing", props.route.params.uid));
+    setFollowing(false);
+  }
+
   if(user === null) {
     return <View/>
   }
@@ -60,6 +81,20 @@ function Profile(props) {
       <View styles = {styles.containerInfo}>
       <Text>{user.name}</Text>
       <Text>{user.email}</Text>
+
+      {props.route.params.uid !== getAuth().currentUser.uid ? (
+        <View>
+          {following ? (
+              <Button
+                title="Following"
+                onPress={() => onUnfollow()}/>
+            ) : (
+              <Button
+                title="Follow"
+                onPress={() => onFollow()}/>
+            )}
+        </View>
+      ) : null}
       </View>
 
       <View style= {styles.containerGallery}>
@@ -101,7 +136,8 @@ const styles = StyleSheet.create({
 })
 const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
-  posts: store.userState.posts
+  posts: store.userState.posts,
+  following: store.userState.following
 })
 
 export default connect(mapStateToProps, null)(Profile);
