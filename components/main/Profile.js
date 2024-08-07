@@ -40,7 +40,6 @@ function Profile(props) {
     else {
         console.log('User does not exist');
       }
-          
 
     const userPostsRef = collection(db, "posts", props.route.params.uid, "userPosts");
     const q = query(userPostsRef, orderBy("creation", "asc"));
