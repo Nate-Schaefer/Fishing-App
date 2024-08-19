@@ -45,6 +45,7 @@ function Profile(props) {
     const q = query(userPostsRef, orderBy("creation", "asc"));
     
     const snapshot = await getDocs(q);
+    console.log(snapshot);
     if (!snapshot.empty) {
         let posts = snapshot.docs.map(doc => {
             const data = doc.data();

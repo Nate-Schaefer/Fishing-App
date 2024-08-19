@@ -39,7 +39,7 @@ export function fetchUserPosts() {
                     let posts = snapshot.docs.map(doc => {
                         const data = doc.data();
                         const id = doc.id;
-                        return { id, ...data, creation };
+                        return { id, ...data };
                     })
                     dispatch({ type: USER_POSTS_STATE_CHANGE, posts });
                 } else {
