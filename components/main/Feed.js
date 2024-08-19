@@ -9,15 +9,10 @@ function Feed(props) {
   const [posts, setPosts] = useState([])
 
   useEffect(() => {
-    let posts = []
-    console.log(props.usersLoaded)
-    console.log(props.following.length)
-    console.log(props)
+    let posts = [];
     if(props.usersLoaded == props.following.length) {
       for(let i = 0; i < props.following.length; i++) {
         const user = props.users.find(el => el.uid == props.following[i])
-        console.log("user for feed")
-        console.log(user)
         if(user != undefined) {
           posts = [...posts, ...user.posts]
         }
@@ -32,8 +27,8 @@ function Feed(props) {
   }, [props.usersLoaded, props.following, props.users])
 
   return (
-    <View styles = {styles.container}>
-      <View styles = {styles.containerGallery}>
+    <View style = {styles.container}>
+      <View style = {styles.containerGallery}>
         <FlatList
           numColumns={1}
           horizontal={false}
@@ -54,8 +49,7 @@ function Feed(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 40
+    flex: 1
   },
   containerInfo: {
     margin: 20
@@ -63,19 +57,19 @@ const styles = StyleSheet.create({
   containerGallery: {
     flex: 1
   },
+  containerImage: {
+    flex: 1
+  },
   image: {
     flex: 1,
     aspectRatio: 1/1
-  },
-  containerImage: {
-    flex: 1/3
   }
 })
 const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
   posts: store.userState.posts,
   following: store.userState.following,
-  users: store.userState.users,
+  users: store.usersState.users,
   usersLoaded: store.usersState.usersLoaded
 })
 

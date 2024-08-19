@@ -69,8 +69,6 @@ export function fetchUserFollowing() {
                 })
                 dispatch({ type: USER_FOLLOWING_STATE_CHANGE, following });
                 for(let i = 0; i < following.length; i++) {
-                    console.log("h")
-                    console.log(following[i])
                     dispatch(fetchUsersData(following[i]));
                 }
             } catch (error) {
@@ -84,8 +82,6 @@ export function fetchUserFollowing() {
 
 export function fetchUsersData(uid) {
     return async (dispatch, getState) => {
-        console.log("user fetched start")
-        console.log(getState())
         const found = getState().usersState.users.some(el => el.uid == uid)
         const db = getFirestore(); // Initialize Firestore
         if (!found) {
@@ -95,8 +91,6 @@ export function fetchUsersData(uid) {
                 if (snapshot.exists()) {
                     let user = snapshot.data()  ;
                     user.uid = snapshot.id;
-                    console.log("j")
-                    console.log(user)
                     dispatch({ type: USERS_DATA_STATE_CHANGE, user });
                     dispatch(fetchUsersFollowingPosts(user.uid))
                 } else {
