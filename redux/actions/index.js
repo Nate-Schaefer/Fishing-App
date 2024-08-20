@@ -1,7 +1,12 @@
 import { getFirestore, doc, getDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { USER_STATE_CHANGE, USER_POSTS_STATE_CHANGE, USER_FOLLOWING_STATE_CHANGE, USERS_DATA_STATE_CHANGE, USERS_POSTS_STATE_CHANGE } from '../constants/index'; // Ensure this path is correct
+import { USER_STATE_CHANGE, USER_POSTS_STATE_CHANGE, USER_FOLLOWING_STATE_CHANGE, USERS_DATA_STATE_CHANGE, USERS_POSTS_STATE_CHANGE, CLEAR_DATA } from '../constants/index'; // Ensure this path is correct
 
+export function clearData() {
+    return ((dispatch) => {
+        dispatch({ type: CLEAR_DATA });
+    });
+}
 export function fetchUser() {
     return async (dispatch) => {
         const db = getFirestore(); // Initialize Firestore

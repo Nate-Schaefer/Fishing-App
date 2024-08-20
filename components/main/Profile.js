@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { StyleSheet, Text, View, Image, FlatList, Button } from 'react-native'
 import { connect } from 'react-redux'
-import { getAuth } from 'firebase/auth'
+import { getAuth, signOut } from 'firebase/auth'
 import { getFirestore, doc, getDoc, collection, query, orderBy, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
 
 
@@ -50,7 +50,8 @@ function Profile(props) {
         let posts = snapshot.docs.map(doc => {
             const data = doc.data();
             const id = doc.id;
-            return { id, ...data };
+            const creation = data.creation.toDate(); // Convert Firestore Timestamp to Date
+            return { id, ...data, creation };
         })
         setUserPosts(posts);
       }
@@ -71,6 +72,11 @@ function Profile(props) {
     const auth = getAuth();
     await deleteDoc(doc(db, "following", auth.currentUser.uid, "userFollowing", props.route.params.uid));
     setFollowing(false);
+  }
+
+  const onLogout = async () => {
+    const auth = getAuth();
+    await signOut(auth);
   }
 
   if(user === null) {
@@ -94,7 +100,11 @@ function Profile(props) {
                 onPress={() => onFollow()}/>
             )}
         </View>
-      ) : null}
+      ) : 
+      <Button
+        title="Logout"
+        onPress={() => onLogout()}/>
+      }
       </View>
 
       <View style= {styles.containerGallery}>
